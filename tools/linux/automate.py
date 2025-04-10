@@ -101,8 +101,8 @@ build_tools_params = ["--branch", branch,
                       "--update", "1",
                       "--qt-dir", os.getcwd() + "/qt_build/Qt-5.9.9"] + params
 
-base.cmd_in_dir("../..", "./configure.py", build_tools_params)
-base.cmd_in_dir("../..", "./make.py")
+#base.cmd_in_dir("../..", "./configure.py", build_tools_params)
+#base.cmd_in_dir("../..", "./make.py")
 
 
 
