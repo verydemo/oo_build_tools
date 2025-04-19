@@ -2,26 +2,50 @@
 
 import sys
 sys.path.append('../..')
+sys.path.append('android')
 import config
 import base
 import os
+import glob
 import icu_android
+
+def fetch_icu(major, minor):
+  base.cmd("git", ["clone", "--depth", "1", "--branch", "maint/maint-" + major, "https://github.com/unicode-org/icu.git", "./icu2"])
+  base.copy_dir("./icu2/icu4c", "./icu")
+  base.delete_dir_with_access_error("icu2")
+  #base.cmd("svn", ["export", "https://github.com/unicode-org/icu/tags/release-" + icu_major + "-" + icu_minor + "/icu4c", "./icu", "--non-interactive", "--trust-server-cert"])
+  return
+
+def clear_module():
+  if base.is_dir("icu"):
+    base.delete_dir_with_access_error("icu")
+
+  # remove build
+  for child in glob.glob("./*"):
+    if base.is_dir(child):
+      base.delete_dir(child)
+
+  return
 
 def make():
   print("[fetch & build]: icu")
-
-  if (-1 != config.option("platform").find("android")):
-    icu_android.make()
 
   base_dir = base.get_script_dir() + "/../../core/Common/3dParty/icu"
   old_cur = os.getcwd()
   os.chdir(base_dir)
 
+  base.check_module_version("3", clear_module)
+
+  if (-1 != config.option("platform").find("android")):
+    icu_android.make()
+
+  os.chdir(base_dir)
+
   icu_major = "58"
   icu_minor = "3"
-
+  
   if not base.is_dir("icu"):
-    base.cmd("svn", ["export", "https://github.com/unicode-org/icu/tags/release-" + icu_major + "-" + icu_minor + "/icu4c", "./icu", "--non-interactive", "--trust-server-cert"])
+    fetch_icu(icu_major, icu_minor)  
 
   if ("windows" == base.host_platform()):
     platformToolset = "v140"
@@ -66,6 +90,7 @@ def make():
       base.create_dir(base_dir + "/icu/cross_build")
       os.chdir("icu/cross_build")
       base.cmd("./../source/runConfigureICU", ["Linux", "--prefix=" + base_dir + "/icu/cross_build_install"])
+      base.replaceInFile("./../source/icudefs.mk.in", "LDFLAGS = @LDFLAGS@ $(RPATHLDFLAGS)", "LDFLAGS = @LDFLAGS@ $(RPATHLDFLAGS) -static-libstdc++ -static-libgcc")
       base.cmd("make", ["-j4"])
       base.cmd("make", ["install"], True)
       base.create_dir(base_dir + "/linux_64")
@@ -74,7 +99,7 @@ def make():
       base.copy_file(base_dir + "/icu/cross_build_install/lib/libicuuc.so." + icu_major + "." + icu_minor, base_dir + "/linux_64/build/libicuuc.so." + icu_major)
       base.copy_dir(base_dir + "/icu/cross_build_install/include", base_dir + "/linux_64/build/include")
       
-    if config.check_option("platform", "linux_arm64") and not base.is_dir(base_dir + "/linux_arm64") and not base.is_os_arm():
+    if config.check_option("platform", "linux_arm64") and not base.is_dir(base_dir + "/linux_arm64") and base.is_os_arm():
       base.create_dir(base_dir + "/icu/linux_arm64")
       os.chdir(base_dir + "/icu/linux_arm64")
       base_arm_tool_dir = base.get_prefix_cross_compiler_arm64()
