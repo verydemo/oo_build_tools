@@ -85,6 +85,7 @@ if ("windows" == base.host_platform()) and (config.check_option("module", "deskt
   base.copy_dir(base_dir + "/tools/WinSparkle-0.7.0/Release", base_dir + "/../desktop-apps/win-linux/3dparty/WinSparkle/win_32")
   base.copy_dir(base_dir + "/tools/WinSparkle-0.7.0/x64/Release", base_dir + "/../desktop-apps/win-linux/3dparty/WinSparkle/win_64")
 
+exit(0)
 # build
 build.make()
 
