@@ -52,7 +52,7 @@ config.parse_defaults()
 base.check_build_version(base_dir)
 
 # update
-if ("1" == config.option("update")):
+if ("1" == config.option("update") and False):
   repositories = base.get_repositories()
   base.update_repositories(repositories)
 
