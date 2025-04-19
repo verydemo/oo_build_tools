@@ -66,7 +66,6 @@ def make_pro_file(makefiles_dir, pro_file):
       base.cmd(qt_dir + "/bin/qmake", ["-nocache", pro_file, "CONFIG+=" + config_param] + qmake_addon)
       print("qt_dir:  "+ qt_dir)
       print("config_param:  "+ config_param)
-      print("qmake_addon:  "+ qmake_addon)
 
       if ("1" == config.option("clean")):
         base.cmd_and_return_cwd(base.app_make(), ["clean", "-f", makefiles_dir + "/build.makefile_" + file_suff], True)
