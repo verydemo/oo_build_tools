@@ -1254,3 +1254,14 @@ def copy_v8_files(core_dir, deploy_dir, platform, is_xp=False):
   else:
     copy_file(directory_v8 + platform + "/icudtl.dat", deploy_dir + "/icudtl.dat")
   return
+
+def check_module_version(actual_version, clear_func):
+  module_file = "./module.version"
+  current_module_version = readFile(module_file)
+  if (actual_version == current_module_version):
+    return
+  if is_file(module_file):
+    delete_file(module_file)
+  writeFile(module_file, actual_version)
+  clear_func()
+  return
