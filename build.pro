@@ -9,8 +9,10 @@ include($$PWD/common.pri)
 CONFIG += ordered
 
 core_windows {
+	desktop:CONFIG += core_and_multimedia
 }
 core_linux {
+	desktop:CONFIG += core_and_multimedia
 }
 core_mac {
 	CONFIG += no_desktop_apps
@@ -27,10 +29,10 @@ core_android {
 }
 
 addSubProject(cryptopp,		$$CORE_ROOT_DIR/Common/3dParty/cryptopp/project/cryptopp.pro)
-addSubProject(kernel,		$$CORE_ROOT_DIR/Common/kernel.pro,\
-				cryptopp)
 addSubProject(unicodeconverter,	$$CORE_ROOT_DIR/UnicodeConverter/UnicodeConverter.pro,\
 				kernel)
+addSubProject(kernel,		$$CORE_ROOT_DIR/Common/kernel.pro,\
+				cryptopp)
 addSubProject(network,	$$CORE_ROOT_DIR/Common/Network/network.pro,\
 				kernel)
 addSubProject(graphics,		$$CORE_ROOT_DIR/DesktopEditor/graphics/pro/graphics.pro,\
