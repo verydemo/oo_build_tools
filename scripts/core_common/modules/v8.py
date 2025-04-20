@@ -196,7 +196,6 @@ def make():
     base.cmd2("gn", ["gen", "out.gn/mac_64", "--args=\"is_debug=false " + base_args64 + "\""])
     base.cmd("ninja", ["-C", "out.gn/mac_64"])
 
-  # add enable_iterator_debugging=false for disable _ITERATOR_DEBUG_LEVEL
   if config.check_option("platform", "win_64"):
     if (-1 != config.option("config").lower().find("debug")):
       base.cmd2("gn", ["gen", "out.gn/win_64/debug", "--args=\"is_debug=true " + base_args64 + " is_clang=false\""])

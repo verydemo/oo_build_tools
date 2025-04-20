@@ -31,7 +31,9 @@ def make():
     for toolchain in glob.glob(base.get_env("ANDROID_NDK_ROOT") + "/toolchains/*"):
       if base.is_dir(toolchain):
         check_android_ndk_macos_arm(toolchain + "/prebuilt")
-
+  
+  v8.make()
+  exit()
   boost.make()
   cef.make()
   icu.make()
