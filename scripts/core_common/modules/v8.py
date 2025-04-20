@@ -169,13 +169,11 @@ def make():
 
   # --------------------------------------------------------------------------
   # build
-  if base.is_os_arm():
-    base.copy_file(base.get_script_dir() + "/detect_host_arch.py", "v8/build/detect_host_arch.py")
   os.chdir("v8")
 
 
   if base.is_os_arm():
-    base_args64 = "target_cpu=\\\"arm64\\\" v8_target_cpu=\\\"arm64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
+    base_args64 = "target_cpu=\\\"arm64\\\" v8_target_cpu=\\\"arm64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false clang_base_path=\\\"/usr/bin\\\" clang_use_chrome_plugins=false"
     base_args32 = "target_cpu=\\\"arm\\\" v8_target_cpu=\\\"arm\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
   else:
     base_args64 = "target_cpu=\\\"x64\\\" v8_target_cpu=\\\"x64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
