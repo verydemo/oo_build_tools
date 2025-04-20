@@ -169,12 +169,22 @@ def make():
 
   # --------------------------------------------------------------------------
   # build
+  if base.is_os_arm():
+    base.copy_file(base.get_script_dir() + "/detect_host_arch.py", "v8/build/detect_host_arch.py")
   os.chdir("v8")
 
-  base_args64 = "target_cpu=\\\"x64\\\" v8_target_cpu=\\\"x64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
-  base_args32 = "target_cpu=\\\"x86\\\" v8_target_cpu=\\\"x86\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
 
-  if config.check_option("platform", "linux_64"):
+  if base.is_os_arm():
+    base_args64 = "target_cpu=\\\"arm64\\\" v8_target_cpu=\\\"arm64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
+    base_args32 = "target_cpu=\\\"arm\\\" v8_target_cpu=\\\"arm\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
+  else:
+    base_args64 = "target_cpu=\\\"x64\\\" v8_target_cpu=\\\"x64\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
+    base_args32 = "target_cpu=\\\"x86\\\" v8_target_cpu=\\\"x86\\\" v8_static_library=true is_component_build=false v8_use_snapshot=false"
+
+  if config.check_option("platform", "linux_arm64"): # this is a failsafe:
+    base.cmd2("gn", ["gen", "out.gn/linux_64", "--args=\"is_debug=false " + base_args64 + " is_clang=" + is_use_clang() + " use_sysroot=false treat_warnings_as_errors=false\""])
+    base.cmd("ninja", ["-C", "out.gn/linux_64"])
+  if config.check_option("platform", "linux_64"): # this is a failsafe:
     base.cmd2("gn", ["gen", "out.gn/linux_64", "--args=\"is_debug=false " + base_args64 + " is_clang=" + is_use_clang() + " use_sysroot=false treat_warnings_as_errors=false\""])
     base.cmd("ninja", ["-C", "out.gn/linux_64"])
 
@@ -186,6 +196,7 @@ def make():
     base.cmd2("gn", ["gen", "out.gn/mac_64", "--args=\"is_debug=false " + base_args64 + "\""])
     base.cmd("ninja", ["-C", "out.gn/mac_64"])
 
+  # add enable_iterator_debugging=false for disable _ITERATOR_DEBUG_LEVEL
   if config.check_option("platform", "win_64"):
     if (-1 != config.option("config").lower().find("debug")):
       base.cmd2("gn", ["gen", "out.gn/win_64/debug", "--args=\"is_debug=true " + base_args64 + " is_clang=false\""])
